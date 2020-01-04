@@ -64,7 +64,6 @@ abstract class PackageAbstract implements PackageInterface
      * Make sure the parent is called when overriding this function.
      *
      * @param Container $pimple A container instance
-     * @throws PackageException
      */
     public function register(Container $pimple): void
     {
