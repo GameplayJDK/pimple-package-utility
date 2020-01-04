@@ -1,0 +1,22 @@
+{
+  "name": "gameplayjdk/pimple-package-utility",
+  "description": "Utility classes for pimple container based libraries and applications with configuration and tag support.",
+  "type": "library",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "GameplayJDK",
+      "email": "github@gameplayjdk.de"
+    }
+  ],
+  "require": {
+    "php": ">= 7.1",
+    "pimple/pimple": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimple\\Package\\": "src/"
+    }
+  }
+}
