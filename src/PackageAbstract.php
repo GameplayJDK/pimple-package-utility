@@ -22,6 +22,7 @@ namespace Pimple\Package;
 use ArrayObject;
 use Closure;
 use Pimple\Container;
+use Pimple\Package\Exception\PackageException;
 
 /**
  * Class PackageAbstract
@@ -63,6 +64,7 @@ abstract class PackageAbstract implements PackageInterface
      * Make sure the parent is called when overriding this function.
      *
      * @param Container $pimple A container instance
+     * @throws PackageException
      */
     public function register(Container $pimple): void
     {
@@ -70,9 +72,15 @@ abstract class PackageAbstract implements PackageInterface
             $this->container = $pimple;
         }
 
-        if (!$this->hasTagSupport(true)) {
-
-        }
+//        // Automatically add tag support if not present.
+//        if (!$this->hasTagSupport(false)) {
+//            $this->addTagSupport();
+//        }
+//
+//        // Automatically add configuration support if not present.
+//        if (!$this->hasConfigurationSupport(false)) {
+//            $this->addConfigurationSupport();
+//        }
     }
 
     /**
