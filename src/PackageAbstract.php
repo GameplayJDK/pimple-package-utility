@@ -47,10 +47,10 @@ abstract class PackageAbstract implements PackageInterface
     protected $container;
 
     /**
-     * PackageConfiguration constructor.
-     * @param Container $container
+     * PackageAbstract constructor.
+     * @param Container|null $container
      */
-    public function __construct(Container $container = null)
+    public function __construct(?Container $container = null)
     {
         $this->container = $container;
     }
@@ -88,7 +88,7 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function registerService(string $serviceName, Closure $closure): void
     {
-        $container[$serviceName] = $closure;
+        $this->container[$serviceName] = $closure;
     }
 
     /**
@@ -153,7 +153,7 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function registerTag(string $tagName, string $serviceName): void
     {
-        $container[static::SERVICE_NAME_TAG][$tagName][] = $serviceName;
+        $this->container[static::SERVICE_NAME_TAG][$tagName][] = $serviceName;
     }
 
     /**
