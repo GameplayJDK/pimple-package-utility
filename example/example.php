@@ -119,6 +119,9 @@ class MyPackage extends PackageAbstract
     }
 }
 
+// TODO: Add example for resolveTag().
+// TODO: Add example for registerServiceLazy().
+
 // Initialize configuration in container.
 $valueArray = [
     PackageAbstract::SERVICE_NAME_CONFIGURATION => [
@@ -128,7 +131,7 @@ $valueArray = [
     ],
 ];
 // Create container with that value array.
-$container = new Container();
+$container = new Container($valueArray);
 
 // Register the package to pimple without a container instance, in which case the internal container is set when calling
 // parent::register($container)...

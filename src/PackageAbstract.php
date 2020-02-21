@@ -136,6 +136,7 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function hasTagSupport(bool $shouldThrow = false): bool
     {
+        // FIXME: Use a more graceful check for array object or array.
         $tagSupport = (isset($this->container[static::SERVICE_NAME_TAG]) && ($this->container[static::SERVICE_NAME_TAG] instanceof ArrayObject));
 
         if (!$tagSupport && $shouldThrow) {
@@ -157,6 +158,48 @@ abstract class PackageAbstract implements PackageInterface
     }
 
     /**
+     * Resolve a tag name to a list of service class instances.
+     *
+     * @param string $tagName
+     * @param string|null $parentClassName
+     * @param array|null $excludeClassName
+     * @return array
+     * @throws PackageException
+     */
+    protected function resolveTag(string $tagName, ?string $parentClassName = null, ?array $excludeClassName = null): array
+    {
+        if (!$this->hasTagSupport(true)) {
+            return [];
+        }
+
+        /** @var ArrayObject $tag */
+        $tag = $this->container[PackageAbstract::SERVICE_NAME_TAG];
+
+        // FIXME: Use a more graceful check for array object or array.
+        if (isset($tag[$tagName]) && is_array($tag[$tagName])) {
+            $tagArray = $tag[$tagName];
+
+            return array_reduce($tagArray, function (array $carry, string $serviceName) use ($parentClassName, $excludeClassName): array {
+                if (null !== $excludeClassName && in_array($serviceName, $excludeClassName)) {
+                    return $carry;
+                }
+
+                $service = $this->container[$serviceName] ?? null;
+
+                if (null === $parentClassName || (null !== $parentClassName && is_subclass_of($service, $parentClassName, true))) {
+                    $carry[$serviceName] = $service;
+                }
+
+                return $carry;
+            }, []);
+        }
+
+        throw new PackageException('Unable to resolve tag.');
+    }
+
+    /**
+     * Register a service and register a service name for a tag name.
+     *
      * @param string $tagName
      * @param string $serviceName
      * @param Closure $closure
@@ -201,7 +244,8 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function hasConfigurationSupport(bool $shouldThrow = false): bool
     {
-        $configurationSupport = (isset($this->container[static::SERVICE_NAME_CONFIGURATION])) && (is_array($this->container[static::SERVICE_NAME_CONFIGURATION]));
+        // FIXME: Use a more graceful check for array object or array.
+        $configurationSupport = (isset($this->container[static::SERVICE_NAME_CONFIGURATION]) && is_array($this->container[static::SERVICE_NAME_CONFIGURATION]));
 
         if (!$configurationSupport && $shouldThrow) {
             throw new PackageException('Container does not have configuration support!');
@@ -239,5 +283,29 @@ abstract class PackageAbstract implements PackageInterface
         $configuration = $this->container[static::SERVICE_NAME_CONFIGURATION];
         $configuration[$serviceName] = $settings;
         $this->container[static::SERVICE_NAME_CONFIGURATION] = $configuration;
+    }
+
+    /**
+     * Register a lazy service. This is especially useful when used with {@link Container::extend()}. Register a default
+     * configuration to specify the implementation.
+     *
+     * @param string $serviceName
+     * @param string $serviceNameLazy
+     * @throws PackageException
+     */
+    protected function registerServiceLazy(string $serviceName, string $serviceNameLazy): void
+    {
+        $this->registerConfiguration($serviceName, [
+            'implementation' => $serviceNameLazy,
+        ]);
+
+        $configuration = $this->container[static::SERVICE_NAME_CONFIGURATION];
+
+        $this->registerService($serviceName, function (Container $container) use ($configuration, $serviceName) {
+            /** @var array $settings */
+            $settings = $configuration[$serviceName];
+
+            return $container[$settings['implementation']];
+        });
     }
 }

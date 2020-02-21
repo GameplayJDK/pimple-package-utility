@@ -19,13 +19,11 @@
 
 namespace Pimple\Package\Exception;
 
-use Exception;
-
 /**
- * Class PackageException
+ * Interface PackageExceptionInterface
  *
  * @package Pimple\Package\Exception
  */
-class PackageException extends Exception implements PackageExceptionInterface
+interface PackageExceptionInterface
 {
 }
