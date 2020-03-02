@@ -114,7 +114,7 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function addTagSupport(): void
     {
-        $this->container[static::SERVICE_NAME_TAG] = new ArrayObject();
+        $this->container[static::SERVICE_NAME_TAG] = [];
     }
 
     /**
@@ -136,8 +136,7 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function hasTagSupport(bool $shouldThrow = false): bool
     {
-        // FIXME: Use a more graceful check for array object or array.
-        $tagSupport = (isset($this->container[static::SERVICE_NAME_TAG]) && ($this->container[static::SERVICE_NAME_TAG] instanceof ArrayObject));
+        $tagSupport = (isset($this->container[static::SERVICE_NAME_TAG]) && is_array($this->container[static::SERVICE_NAME_TAG]));
 
         if (!$tagSupport && $shouldThrow) {
             throw new PackageException('Container does not have tag support!');
@@ -175,7 +174,6 @@ abstract class PackageAbstract implements PackageInterface
         /** @var ArrayObject $tag */
         $tag = $this->container[PackageAbstract::SERVICE_NAME_TAG];
 
-        // FIXME: Use a more graceful check for array object or array.
         if (isset($tag[$tagName]) && is_array($tag[$tagName])) {
             $tagArray = $tag[$tagName];
 
@@ -244,7 +242,6 @@ abstract class PackageAbstract implements PackageInterface
      */
     protected function hasConfigurationSupport(bool $shouldThrow = false): bool
     {
-        // FIXME: Use a more graceful check for array object or array.
         $configurationSupport = (isset($this->container[static::SERVICE_NAME_CONFIGURATION]) && is_array($this->container[static::SERVICE_NAME_CONFIGURATION]));
 
         if (!$configurationSupport && $shouldThrow) {

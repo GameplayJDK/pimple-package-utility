@@ -124,7 +124,7 @@ class MyPackage extends PackageAbstract
 
 // Initialize configuration in container.
 $valueArray = [
-    PackageAbstract::SERVICE_NAME_CONFIGURATION => [
+    MyPackage::SERVICE_NAME_CONFIGURATION => [
         SomeService::class => [
             'someValue' => 10,
         ],
